@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja Parlante con Vueltos 💵</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #eef2f3;
+            margin: 0; padding: 15px;
+            max-width: 600px; margin: auto;
+        }
+
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
+
+        /* Grid de productos */
+        .grid-productos {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+        }
+
+        .card {
+            background: white; border-radius: 15px; padding: 10px; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .card h3 { font-size: 15px; color: #333; margin: 0; min-height: 35px; display: flex; align-items: center; justify-content: center; }
+        .card .precio { color: #27ae60; font-weight: bold; font-size: 1.1em; margin: 5px 0; }
+
+        .contador {
+            font-size: 26px; font-weight: bold; color: #2c3e50;
+            background: #f8f9fa; border-radius: 8px; margin: 5px 0;
+        }
+
+        .btn-pulsador {
+            background-color: #3498db; color: white; border: none; padding: 12px;
+            border-radius: 10px; font-size: 22px; font-weight: bold; cursor: pointer;
+            width: 100%; touch-action: manipulation;
+        }
+        .btn-pulsador:active { background-color: #2980b9; transform: scale(0.96); }
+
+        /* Botón Total Parlante */
+        .btn-total {
+            width: 100%; padding: 18px; background-color: #8e44ad; color: white;
+            font-size: 20px; font-weight: bold; border: none; border-radius: 12px;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+        
+        /* SECCIÓN DE PAGO (Oculta al inicio) */
+        #seccion-pago {
+            display: none; /* Se activa con JS */
+            background: #fff; padding: 20px; border-radius: 15px;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            margin-top: 10px; border: 2px solid #8e44ad;
+        }
+
+        .input-pago {
+            width: 90%; padding: 10px; font-size: 24px; text-align: center;
+            border: 2px solid #ccc; border-radius: 10px; margin-bottom: 10px;
+            display: block; margin-left: auto; margin-right: auto;
+        }
+
+        .btn-cambio {
+            width: 100%; padding: 15px; background-color: #27ae60; color: white;
+            font-size: 20px; font-weight: bold; border: none; border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        #resultado-cambio {
+            text-align: center; font-size: 24px; font-weight: bold; color: #c0392b;
+            margin-top: 15px; padding: 10px; background: #ffebeb; border-radius: 10px;
+            display: none;
+        }
+
+        .btn-limpiar {
+            width: 100%; padding: 12px; background-color: #e74c3c; color: white;
+            border: none; border-radius: 8px; font-size: 16px; margin-top: 30px;
+        }
+        
+        /* Resumen escrito pequeño */
+        #resumen-texto { 
+            font-size: 14px; color: #555; background: #fff; padding: 10px; 
+            margin-bottom: 10px; border-radius: 8px; display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>🛒 Caja Rápida</h1>
+
+    <div class="grid-productos">
+        <div class="card">
+            <h3>Gaseosa Pequeña</h3>
+            <div class="precio">$2.000</div>
+            <div class="contador" id="count-0">0</div>
+            <button class="btn-pulsador" onclick="sumar(0)">+ 1</button>
+        </div>
+
+        <div class="card">
+            <h3>Gaseosa Litro</h3>
+            <div class="precio">$4.000</div>
+            <div class="contador" id="count-1">0</div>
+            <button class="btn-pulsador" onclick="sumar(1)">+ 1</button>
+        </div>
+
+        <div class="card">
+            <h3>Cerveza</h3>
+            <div class="precio">$2.800</div>
+            <div class="contador" id="count-2">0</div>
+            <button class="btn-pulsador" onclick="sumar(2)">+ 1</button>
+        </div>
+
+        <div class="card">
+            <h3>Cerveza Litro</h3>
+            <div class="precio">$6.000</div>
+            <div class="contador" id="count-3">0</div>
+            <button class="btn-pulsador" onclick="sumar(3)">+ 1</button>
+        </div>
+
+        <div class="card">
+            <h3>Papas</h3>
+            <div class="precio">$1.800</div>
+            <div class="contador" id="count-4">0</div>
+            <button class="btn-pulsador" onclick="sumar(4)">+ 1</button>
+        </div>
+    </div>
+
+    <div id="resumen-texto"></div>
+
+    <button class="btn-total" onclick="calcularYHablar()">
+        🗣️ DECIR TOTAL
+    </button>
+
+    <div id="seccion-pago">
+        <div style="text-align:center; font-size: 18px; margin-bottom: 5px;">¿Con cuánto paga? 💵</div>
+        <input type="number" id="input-dinero-cliente" class="input-pago" placeholder="$" inputmode="numeric">
+        
+        <button class="btn-cambio" onclick="calcularCambio()">
+            🧮 CALCULAR CAMBIO
+        </button>
+
+        <div id="resultado-cambio"></div>
+    </div>
+
+    <button class="btn-limpiar" onclick="limpiar()">🗑️ Nueva Venta (Borrar)</button>
+
+    <script>
+        const productos = [
+            { nombre: "Gaseosa personal", precio: 2000, cantidad: 0 },
+            { nombre: "Gaseosa de litro", precio: 4000, cantidad: 0 },
+            { nombre: "Cerveza", precio: 2800, cantidad: 0 },
+            { nombre: "Cerveza de litro", precio: 6000, cantidad: 0 },
+            { nombre: "Paquete de Papas", precio: 1800, cantidad: 0 }
+        ];
+
+        let totalActual = 0; // Variable global para guardar el total
+
+        function sumar(index) {
+            window.speechSynthesis.cancel();
+            productos[index].cantidad++;
+            document.getElementById(`count-${index}`).innerText = productos[index].cantidad;
+            
+            // Ocultar sección de pago si se agrega algo nuevo para evitar errores
+            ocultarPago();
+        }
+
+        function calcularYHablar() {
+            window.speechSynthesis.cancel();
+            totalActual = 0;
+            let textoVoz = "Lleva: ";
+            let resumenHTML = "<b>Detalle:</b><br>";
+            let hayItems = false;
+
+            productos.forEach(prod => {
+                if (prod.cantidad > 0) {
+                    let subtotal = prod.cantidad * prod.precio;
+                    totalActual += subtotal;
+                    textoVoz += `${prod.cantidad} ${prod.nombre}, `;
+                    resumenHTML += `- ${prod.cantidad} ${prod.nombre} ($${subtotal})<br>`;
+                    hayItems = true;
+                }
+            });
+
+            if (!hayItems) {
+                hablar("No has marcado nada.");
+                return;
+            }
+
+            // Mostrar resumen pequeño
+            const divResumen = document.getElementById('resumen-texto');
+            divResumen.innerHTML = resumenHTML + `<br><b>TOTAL: $${totalActual}</b>`;
+            divResumen.style.display = 'block';
+
+            // Preparar voz
+            textoVoz += ` El total son ${totalActual} pesos.`;
+            hablar(textoVoz);
+
+            // Mostrar la sección para calcular el cambio
+            document.getElementById('seccion-pago').style.display = 'block';
+            
+            // Enfocar el input para escribir rápido
+            document.getElementById('input-dinero-cliente').value = '';
+            document.getElementById('input-dinero-cliente').focus();
+            
+            // Scroll hacia abajo
+            document.getElementById('seccion-pago').scrollIntoView({behavior: "smooth"});
+        }
+
+        function calcularCambio() {
+            let dineroCliente = document.getElementById('input-dinero-cliente').value;
+            
+            if (dineroCliente === "") {
+                hablar("Escribe con cuánto paga primero");
+                return;
+            }
+
+            dineroCliente = parseInt(dineroCliente);
+            
+            if (dineroCliente < totalActual) {
+                let falta = totalActual - dineroCliente;
+                hablar(`Falta dinero. Faltan ${falta} pesos.`);
+                mostrarResultado(`⚠️ FALTAN $${falta}`);
+                return;
+            }
+
+            let cambio = dineroCliente - totalActual;
+            
+            // Mostrar y Hablar el cambio
+            mostrarResultado(`✅ CAMBIO: $${cambio.toLocaleString('es-CO')}`);
+            hablar(`El cambio es de ${cambio} pesos.`);
+        }
+
+        function mostrarResultado(texto) {
+            const div = document.getElementById('resultado-cambio');
+            div.innerText = texto;
+            div.style.display = 'block';
+        }
+
+        function ocultarPago() {
+            document.getElementById('seccion-pago').style.display = 'none';
+            document.getElementById('resultado-cambio').style.display = 'none';
+            document.getElementById('resumen-texto').style.display = 'none';
+        }
+
+        function hablar(texto) {
+            const locucion = new SpeechSynthesisUtterance(texto);
+            locucion.lang = 'es-US';
+            window.speechSynthesis.speak(locucion);
+        }
+
+        function limpiar() {
+            if(confirm("¿Borrar cuenta y empezar nueva?")) {
+                window.speechSynthesis.cancel();
+                productos.forEach((prod, i) => {
+                    prod.cantidad = 0;
+                    document.getElementById(`count-${i}`).innerText = "0";
+                });
+                ocultarPago();
+                totalActual = 0;
+            }
+        }
+    </script>
+</body>
+</html>
