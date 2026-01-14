@@ -1,266 +1,371 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caja Parlante con Vueltos 💵</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #eef2f3;
-            margin: 0; padding: 15px;
-            max-width: 600px; margin: auto;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Caja Parlante con Vueltos 💵</title>
+  <style>
+    body{
+      font-family: 'Segoe UI', sans-serif;
+      background:#eef2f3;
+      margin:0;padding:15px;
+      max-width:600px;margin:auto;
+    }
+    h1{text-align:center;color:#2c3e50;margin-bottom:10px;}
+    .grid-productos{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;
+    }
+    .card{
+      background:#fff;border-radius:15px;padding:10px;text-align:center;
+      box-shadow:0 4px 6px rgba(0,0,0,0.1);display:flex;flex-direction:column;justify-content:space-between;
+    }
+    .card h3{font-size:15px;color:#333;margin:0;min-height:35px;display:flex;align-items:center;justify-content:center;}
+    .card .precio{color:#27ae60;font-weight:bold;font-size:1.1em;margin:5px 0;}
+    .contador{
+      font-size:26px;font-weight:bold;color:#2c3e50;background:#f8f9fa;border-radius:8px;margin:5px 0;padding:6px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:6px;}
+    .btn-pulsador{
+      background:#3498db;color:white;border:none;padding:10px;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer;
+    }
+    .btn-total{
+      width:100%;padding:18px;background:#8e44ad;color:#fff;font-size:20px;font-weight:bold;border-radius:12px;border:none;cursor:pointer;margin-bottom:10px;
+    }
+    #seccion-pago{display:none;background:#fff;padding:20px;border-radius:15px;box-shadow:0 -4px 10px rgba(0,0,0,0.05);margin-top:10px;border:2px solid #8e44ad;}
+    .input-pago{width:90%;padding:10px;font-size:24px;text-align:center;border:2px solid #ccc;border-radius:10px;margin:0 auto 10px;display:block;}
+    .btn-cambio{width:100%;padding:15px;background:#27ae60;color:#fff;font-size:20px;border-radius:10px;border:none;cursor:pointer;}
+    #resultado-cambio{display:none;text-align:center;font-size:24px;font-weight:bold;color:#c0392b;margin-top:15px;padding:10px;background:#ffebeb;border-radius:10px;}
+    .btn-limpiar{width:100%;padding:12px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-size:16px;margin-top:30px;cursor:pointer;}
+    #resumen-texto{font-size:14px;color:#555;background:#fff;padding:10px;margin-bottom:10px;border-radius:8px;display:none;}
 
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
-
-        /* Grid de productos */
-        .grid-productos {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
-        }
-
-        .card {
-            background: white; border-radius: 15px; padding: 10px; text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between;
-        }
-
-        .card h3 { font-size: 15px; color: #333; margin: 0; min-height: 35px; display: flex; align-items: center; justify-content: center; }
-        .card .precio { color: #27ae60; font-weight: bold; font-size: 1.1em; margin: 5px 0; }
-
-        .contador {
-            font-size: 26px; font-weight: bold; color: #2c3e50;
-            background: #f8f9fa; border-radius: 8px; margin: 5px 0;
-        }
-
-        .btn-pulsador {
-            background-color: #3498db; color: white; border: none; padding: 12px;
-            border-radius: 10px; font-size: 22px; font-weight: bold; cursor: pointer;
-            width: 100%; touch-action: manipulation;
-        }
-        .btn-pulsador:active { background-color: #2980b9; transform: scale(0.96); }
-
-        /* Botón Total Parlante */
-        .btn-total {
-            width: 100%; padding: 18px; background-color: #8e44ad; color: white;
-            font-size: 20px; font-weight: bold; border: none; border-radius: 12px;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-        }
-        
-        /* SECCIÓN DE PAGO (Oculta al inicio) */
-        #seccion-pago {
-            display: none; /* Se activa con JS */
-            background: #fff; padding: 20px; border-radius: 15px;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-            margin-top: 10px; border: 2px solid #8e44ad;
-        }
-
-        .input-pago {
-            width: 90%; padding: 10px; font-size: 24px; text-align: center;
-            border: 2px solid #ccc; border-radius: 10px; margin-bottom: 10px;
-            display: block; margin-left: auto; margin-right: auto;
-        }
-
-        .btn-cambio {
-            width: 100%; padding: 15px; background-color: #27ae60; color: white;
-            font-size: 20px; font-weight: bold; border: none; border-radius: 10px;
-            cursor: pointer;
-        }
-        
-        #resultado-cambio {
-            text-align: center; font-size: 24px; font-weight: bold; color: #c0392b;
-            margin-top: 15px; padding: 10px; background: #ffebeb; border-radius: 10px;
-            display: none;
-        }
-
-        .btn-limpiar {
-            width: 100%; padding: 12px; background-color: #e74c3c; color: white;
-            border: none; border-radius: 8px; font-size: 16px; margin-top: 30px;
-        }
-        
-        /* Resumen escrito pequeño */
-        #resumen-texto { 
-            font-size: 14px; color: #555; background: #fff; padding: 10px; 
-            margin-bottom: 10px; border-radius: 8px; display: none;
-        }
-
-    </style>
+    /* Mic button */
+    .btn-mic{
+      width:42px;height:42px;border-radius:50%;border:none;background:#ff4757;color:#fff;font-size:18px;display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.12);
+    }
+    .btn-mic.listening{background:#2ed573; color:#063; box-shadow:0 4px 10px rgba(46,213,115,0.18); transform:scale(1.04);}    
+    .mic-note{font-size:12px;color:#666;margin-top:6px;text-align:center;}
+    @media (max-width:420px){ .grid-productos{grid-template-columns:1fr;} }
+  </style>
 </head>
 <body>
+  <h1>🛒 Caja Rápida</h1>
 
-    <h1>🛒 Caja Rápida</h1>
+  <div class="grid-productos" id="productos-grid">
+    <!-- productos renderizados por JS -->
+  </div>
 
-    <div class="grid-productos">
-        <div class="card">
-            <h3>Gaseosa Pequeña</h3>
-            <div class="precio">$2.000</div>
-            <div class="contador" id="count-0">0</div>
-            <button class="btn-pulsador" onclick="sumar(0)">+ 1</button>
-        </div>
+  <div id="resumen-texto"></div>
 
-        <div class="card">
-            <h3>Gaseosa Litro</h3>
-            <div class="precio">$4.000</div>
-            <div class="contador" id="count-1">0</div>
-            <button class="btn-pulsador" onclick="sumar(1)">+ 1</button>
-        </div>
+  <button class="btn-total" id="btn-decir-total">🗣️ DECIR TOTAL</button>
 
-        <div class="card">
-            <h3>Cerveza</h3>
-            <div class="precio">$2.800</div>
-            <div class="contador" id="count-2">0</div>
-            <button class="btn-pulsador" onclick="sumar(2)">+ 1</button>
-        </div>
+  <div id="seccion-pago">
+    <div style="text-align:center;font-size:18px;margin-bottom:5px;">¿Con cuánto paga? 💵</div>
+    <input type="text" id="input-dinero-cliente" class="input-pago" placeholder="$" inputmode="numeric">
+    <button class="btn-cambio" id="btn-calcular-cambio">🧮 CALCULAR CAMBIO</button>
+    <div id="resultado-cambio"></div>
+  </div>
 
-        <div class="card">
-            <h3>Cerveza Litro</h3>
-            <div class="precio">$6.000</div>
-            <div class="contador" id="count-3">0</div>
-            <button class="btn-pulsador" onclick="sumar(3)">+ 1</button>
-        </div>
+  <button class="btn-limpiar" id="btn-limpiar">🗑️ Nueva Venta (Borrar)</button>
 
-        <div class="card">
-            <h3>Papas</h3>
-            <div class="precio">$1.800</div>
-            <div class="contador" id="count-4">0</div>
-            <button class="btn-pulsador" onclick="sumar(4)">+ 1</button>
-        </div>
-    </div>
+  <script>
+    // Productos (mismos nombres/precios que antes)
+    const productos = [
+      { id:0, nombre:"Gaseosa Pequeña", precio:2000, cantidad:0 },
+      { id:1, nombre:"Gaseosa Litro", precio:4000, cantidad:0 },
+      { id:2, nombre:"Cerveza", precio:2800, cantidad:0 },
+      { id:3, nombre:"Cerveza Litro", precio:6000, cantidad:0 },
+      { id:4, nombre:"Papas", precio:1800, cantidad:0 }
+    ];
 
-    <div id="resumen-texto"></div>
+    const nf = new Intl.NumberFormat('es-CO');
+    let totalActual = 0;
 
-    <button class="btn-total" onclick="calcularYHablar()">
-        🗣️ DECIR TOTAL
-    </button>
+    // SpeechRecognition constructor (if available)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+    const recognitionMap = {}; // store active recognizers per product id
 
-    <div id="seccion-pago">
-        <div style="text-align:center; font-size: 18px; margin-bottom: 5px;">¿Con cuánto paga? 💵</div>
-        <input type="number" id="input-dinero-cliente" class="input-pago" placeholder="$" inputmode="numeric">
-        
-        <button class="btn-cambio" onclick="calcularCambio()">
-            🧮 CALCULAR CAMBIO
-        </button>
+    // Render productos con botones de mic
+    function renderProductos(){
+      const grid = document.getElementById('productos-grid');
+      grid.innerHTML = '';
+      productos.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${p.nombre}</h3>
+          <div class="precio">$${nf.format(p.precio)}</div>
+          <div class="contador" id="count-${p.id}">${p.cantidad}</div>
+          <div class="controls">
+            <button class="btn-pulsador" data-action="inc" data-id="${p.id}">+ 1</button>
+            <button class="btn-pulsador" data-action="dec" data-id="${p.id}">– 1</button>
+            <button class="btn-mic" title="Dictar cantidad" aria-label="Dictar cantidad" data-id="${p.id}">🎤</button>
+          </div>
+          <div class="mic-note" id="mic-note-${p.id}" aria-live="polite"></div>
+        `;
+        grid.appendChild(card);
+      });
 
-        <div id="resultado-cambio"></div>
-    </div>
+      // disable mic buttons if unsupported
+      if(!SpeechRecognition){
+        document.querySelectorAll('.btn-mic').forEach(b=>{
+          b.disabled = true;
+          b.title = 'Dictado no soportado en este navegador';
+          b.innerText = '🎤';
+          const note = document.getElementById(`mic-note-${b.dataset.id}`);
+          if(note) note.innerText = 'Dictado no soportado en este navegador';
+        });
+      }
+    }
 
-    <button class="btn-limpiar" onclick="limpiar()">🗑️ Nueva Venta (Borrar)</button>
+    renderProductos();
 
-    <script>
-        const productos = [
-            { nombre: "Gaseosa personal", precio: 2000, cantidad: 0 },
-            { nombre: "Gaseosa de litro", precio: 4000, cantidad: 0 },
-            { nombre: "Cerveza", precio: 2800, cantidad: 0 },
-            { nombre: "Cerveza de litro", precio: 6000, cantidad: 0 },
-            { nombre: "Paquete de Papas", precio: 1800, cantidad: 0 }
-        ];
+    // Delegated click on controls (inc/dec and mic)
+    document.getElementById('productos-grid').addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const action = btn.dataset.action;
+      const idAttr = btn.dataset.id;
+      if(typeof idAttr === 'undefined') return;
+      const id = parseInt(idAttr);
+      if(action === 'inc') changeCantidad(id, +1);
+      if(action === 'dec') changeCantidad(id, -1);
+      if(btn.classList.contains('btn-mic')) toggleDictation(id, btn);
+    });
 
-        let totalActual = 0; // Variable global para guardar el total
+    // change quantity helper
+    function changeCantidad(id, delta){
+      productos[id].cantidad = Math.max(0, productos[id].cantidad + delta);
+      updateCountUI(id);
+      ocultarPago();
+    }
 
-        function sumar(index) {
-            window.speechSynthesis.cancel();
-            productos[index].cantidad++;
-            document.getElementById(`count-${index}`).innerText = productos[index].cantidad;
-            
-            // Ocultar sección de pago si se agrega algo nuevo para evitar errores
-            ocultarPago();
+    function updateCountUI(id){
+      const el = document.getElementById(`count-${id}`);
+      if(el) el.innerText = productos[id].cantidad;
+    }
+
+    // Dictation handlers
+    function toggleDictation(id, btn){
+      if(!SpeechRecognition) return alert('Dictado por voz no soportado en este navegador.');
+      if(recognitionMap[id]) {
+        stopDictation(id);
+        return;
+      }
+      startDictation(id, btn);
+    }
+
+    function startDictation(id, btn){
+      // visual
+      btn.classList.add('listening');
+      const note = document.getElementById(`mic-note-${id}`);
+      if(note) note.innerText = 'Escuchando... di la cantidad (ej: "tres" o "3")';
+
+      const rec = new SpeechRecognition();
+      rec.lang = 'es-CO';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+
+      rec.onresult = (ev) => {
+        const transcript = ev.results[0][0].transcript.trim().toLowerCase();
+        const parsed = parseNumberFromSpeech(transcript);
+        if(Number.isFinite(parsed) && parsed >= 0){
+          productos[id].cantidad = parsed;
+          updateCountUI(id);
+          speakConfirmQuantity(id, parsed);
+          ocultarPago();
+          if(note) note.innerText = `Cantidad ajustada a ${parsed}`;
+        } else {
+          if(note) note.innerText = `No entendí cantidad: "${transcript}". Intenta decir un número.`;
+          speak(`No entendí la cantidad, por favor repite el número.`);
         }
+      };
 
-        function calcularYHablar() {
-            window.speechSynthesis.cancel();
-            totalActual = 0;
-            let textoVoz = "Lleva: ";
-            let resumenHTML = "<b>Detalle:</b><br>";
-            let hayItems = false;
+      rec.onerror = (e) => {
+        console.warn('SpeechRecognition error', e);
+        const note = document.getElementById(`mic-note-${id}`);
+        if(note) note.innerText = 'Error de dictado. Intenta de nuevo.';
+        speak('Hubo un error con el dictado.');
+      };
 
-            productos.forEach(prod => {
-                if (prod.cantidad > 0) {
-                    let subtotal = prod.cantidad * prod.precio;
-                    totalActual += subtotal;
-                    textoVoz += `${prod.cantidad} ${prod.nombre}, `;
-                    resumenHTML += `- ${prod.cantidad} ${prod.nombre} ($${subtotal})<br>`;
-                    hayItems = true;
-                }
-            });
+      rec.onend = () => {
+        // cleanup
+        stopDictation(id);
+      };
 
-            if (!hayItems) {
-                hablar("No has marcado nada.");
-                return;
-            }
+      recognitionMap[id] = rec;
+      try {
+        rec.start();
+      } catch(err){
+        console.warn('start error', err);
+      }
+    }
 
-            // Mostrar resumen pequeño
-            const divResumen = document.getElementById('resumen-texto');
-            divResumen.innerHTML = resumenHTML + `<br><b>TOTAL: $${totalActual}</b>`;
-            divResumen.style.display = 'block';
+    function stopDictation(id){
+      const rec = recognitionMap[id];
+      const btn = document.querySelector(`.btn-mic[data-id="${id}"]`);
+      if(rec){
+        try{ rec.onresult = rec.onend = rec.onerror = null; rec.stop(); } catch(e){}
+        delete recognitionMap[id];
+      }
+      if(btn) btn.classList.remove('listening');
+      const note = document.getElementById(`mic-note-${id}`);
+      if(note && note.innerText === 'Escuchando... di la cantidad (ej: "tres" o "3")') note.innerText = '';
+    }
 
-            // Preparar voz
-            textoVoz += ` El total son ${totalActual} pesos.`;
-            hablar(textoVoz);
+    // parse numbers from Spanish speech (digits or words up to 99-ish)
+    function parseNumberFromSpeech(text){
+      if(!text) return NaN;
+      // try to find explicit digits in text
+      const digitsMatch = text.match(/(-?\d+)/);
+      if(digitsMatch) return parseInt(digitsMatch[1],10);
 
-            // Mostrar la sección para calcular el cambio
-            document.getElementById('seccion-pago').style.display = 'block';
-            
-            // Enfocar el input para escribir rápido
-            document.getElementById('input-dinero-cliente').value = '';
-            document.getElementById('input-dinero-cliente').focus();
-            
-            // Scroll hacia abajo
-            document.getElementById('seccion-pago').scrollIntoView({behavior: "smooth"});
+      // common phrases: "uno", "dos", ... up to "veinte", also "cero", "un", "una"
+      const lex = {
+        'cero':0,'un':1,'uno':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,
+        'diez':10,'once':11,'doce':12,'trece':13,'catorce':14,'catorce':14,'quince':15,
+        'dieciseis':16,'dieciséis':16,'diecisiete':17,'dieciocho':18,'diecinueve':19,'veinte':20,
+        'veintiuno':21,'veintidos':22,'veintidós':22,'veintitres':23,'veintitrés':23,'veinticuatro':24,
+        'treinta':30,'cuarenta':40,'cincuenta':50
+      };
+
+      // try direct mapping of single word
+      const cleaned = text.replace(/[^a-záéíóúüñ\s]/g,'').trim();
+      if(lex.hasOwnProperty(cleaned)) return lex[cleaned];
+
+      // try to extract first word that maps
+      const words = cleaned.split(/\s+/);
+      for(const w of words){
+        if(lex.hasOwnProperty(w)) return lex[w];
+      }
+
+      // handle patterns like "veinti tres" or "veinte y tres"
+      const complexMatch = cleaned.match(/(veinte|veinti|treinta|cuarenta|cincuenta|veintid[oá]s?|veinti)\s*(y\s*)?([a-z]+)/);
+      if(complexMatch){
+        const tensWord = complexMatch[1];
+        const unitWord = complexMatch[3];
+        const tensMap = {'veinte':20,'veinti':20,'veintidos':22,'treinta':30,'cuarenta':40,'cincuenta':50};
+        const t = tensMap[tensWord] || 20;
+        if(lex[unitWord]) return t + lex[unitWord];
+      }
+
+      // fallback: try extracting any number word present
+      for(const key in lex){
+        if(cleaned.includes(key)) return lex[key];
+      }
+
+      return NaN;
+    }
+
+    // speech synthesis helper
+    function speak(text){
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-CO';
+        u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      } catch(e){}
+    }
+
+    function speakConfirmQuantity(id, qty){
+      const prod = productos[id];
+      if(!prod) return;
+      const txt = `Cantidad de ${prod.nombre} establecida en ${qty} unidades.`;
+      speak(txt);
+    }
+
+    // Total / cambio logic (adapted from original)
+    document.getElementById('btn-decir-total').addEventListener('click', ()=>{
+      window.speechSynthesis.cancel();
+      totalActual = 0;
+      let textoVoz = 'Lleva: ';
+      let resumenHTML = '<b>Detalle:</b><br>';
+      let hayItems = false;
+      productos.forEach(p=>{
+        if(p.cantidad > 0){
+          const subtotal = p.cantidad * p.precio;
+          totalActual += subtotal;
+          resumenHTML += `- ${p.cantidad} x ${p.nombre} ($${nf.format(subtotal)})<br>`;
+          hayItems = true;
         }
+      });
+      if(!hayItems){ speak('No has marcado nada.'); return; }
+      resumenHTML += `<br><b>TOTAL: $${nf.format(totalActual)}</b>`;
+      document.getElementById('resumen-texto').innerHTML = resumenHTML;
+      document.getElementById('resumen-texto').style.display = 'block';
+      textoVoz += productos.filter(p=>p.cantidad>0).map(p=>`${p.cantidad} ${p.nombre}`).join(', ') + `. El total es ${nf.format(totalActual)} pesos.`;
+      speak(textoVoz);
+      document.getElementById('seccion-pago').style.display = 'block';
+      document.getElementById('input-dinero-cliente').value = '';
+      document.getElementById('input-dinero-cliente').focus();
+      document.getElementById('seccion-pago').scrollIntoView({behavior:'smooth'});
+    });
 
-        function calcularCambio() {
-            let dineroCliente = document.getElementById('input-dinero-cliente').value;
-            
-            if (dineroCliente === "") {
-                hablar("Escribe con cuánto paga primero");
-                return;
-            }
+    // calcular cambio
+    document.getElementById('btn-calcular-cambio').addEventListener('click', ()=>{
+      if(totalActual <= 0){ speak('Calcula el total antes de ingresar pago.'); return; }
+      const raw = document.getElementById('input-dinero-cliente').value;
+      const pago = parseDinero(raw);
+      if(isNaN(pago)){ speak('Escribe con cuánto paga primero.'); mostrarResultado('Escribe con cuánto paga primero','warn'); return; }
+      if(pago < totalActual){ const falta = totalActual - pago; speak(`Faltan ${falta} pesos.`); mostrarResultado(`⚠️ FALTAN $${nf.format(falta)}`,'warn'); return; }
+      const cambio = Math.round(pago - totalActual);
+      mostrarResultado(`✅ CAMBIO: $${nf.format(cambio)}`,'ok');
+      speak(`El cambio es de ${nf.format(cambio)} pesos.`);
+    });
 
-            dineroCliente = parseInt(dineroCliente);
-            
-            if (dineroCliente < totalActual) {
-                let falta = totalActual - dineroCliente;
-                hablar(`Falta dinero. Faltan ${falta} pesos.`);
-                mostrarResultado(`⚠️ FALTAN $${falta}`);
-                return;
-            }
+    function mostrarResultado(texto, tipo){
+      const d = document.getElementById('resultado-cambio');
+      d.innerText = texto;
+      d.style.display = 'block';
+      d.className = tipo === 'ok' ? 'resultado-ok' : 'resultado-warn';
+    }
 
-            let cambio = dineroCliente - totalActual;
-            
-            // Mostrar y Hablar el cambio
-            mostrarResultado(`✅ CAMBIO: $${cambio.toLocaleString('es-CO')}`);
-            hablar(`El cambio es de ${cambio} pesos.`);
-        }
+    // parse dinero (accepts "10000", "10.000", "10,000")
+    function parseDinero(str){
+      if(typeof str === 'number') return str;
+      if(!str) return NaN;
+      let s = String(str).trim().replace(/[^\d,.-]/g,'');
+      const hasComma = s.includes(',');
+      const hasDot = s.includes('.');
+      if(hasComma && hasDot){
+        if(s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g,'').replace(',','.');
+        else s = s.replace(/,/g,'');
+      } else if(hasDot){
+        const parts = s.split('.');
+        if(parts[1] && parts[1].length === 3) s = s.replace(/\./g,'');
+      } else if(hasComma){
+        const parts = s.split(',');
+        if(parts[1] && parts[1].length === 3) s = s.replace(/,/g,'');
+        else s = s.replace(/,/g,'.');
+      }
+      const n = parseFloat(s);
+      return isNaN(n) ? NaN : Math.round(n);
+    }
 
-        function mostrarResultado(texto) {
-            const div = document.getElementById('resultado-cambio');
-            div.innerText = texto;
-            div.style.display = 'block';
-        }
+    // limpiar venta
+    document.getElementById('btn-limpiar').addEventListener('click', ()=>{
+      if(!confirm('¿Borrar cuenta y empezar nueva?')) return;
+      window.speechSynthesis.cancel();
+      productos.forEach((p,i)=>{ p.cantidad = 0; updateCountUI(i); });
+      ocultarPago();
+      totalActual = 0;
+      // clear mic notes
+      productos.forEach(p=>{
+        const note = document.getElementById(`mic-note-${p.id}`);
+        if(note) note.innerText = '';
+      });
+    });
 
-        function ocultarPago() {
-            document.getElementById('seccion-pago').style.display = 'none';
-            document.getElementById('resultado-cambio').style.display = 'none';
-            document.getElementById('resumen-texto').style.display = 'none';
-        }
+    function ocultarPago(){
+      document.getElementById('seccion-pago').style.display = 'none';
+      document.getElementById('resultado-cambio').style.display = 'none';
+      document.getElementById('resumen-texto').style.display = 'none';
+    }
 
-        function hablar(texto) {
-            const locucion = new SpeechSynthesisUtterance(texto);
-            locucion.lang = 'es-US';
-            window.speechSynthesis.speak(locucion);
-        }
-
-        function limpiar() {
-            if(confirm("¿Borrar cuenta y empezar nueva?")) {
-                window.speechSynthesis.cancel();
-                productos.forEach((prod, i) => {
-                    prod.cantidad = 0;
-                    document.getElementById(`count-${i}`).innerText = "0";
-                });
-                ocultarPago();
-                totalActual = 0;
-            }
-        }
-    </script>
+    // initialize counts UI
+    productos.forEach(p=> updateCountUI(p.id));
+  </script>
 </body>
 </html>
